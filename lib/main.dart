@@ -7,15 +7,15 @@ import 'dart:async';
 void main() {
   runApp(
     MaterialApp(
-      title: 'SI Calculator',
+      title: 'Tcp',
       debugShowCheckedModeBanner: false,
       home: Home(),
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.indigo,
-        accentColor: Colors.indigoAccent,
+      // theme: ThemeData(
+      //  // brightness: Brightness.dark,
+      //   primaryColor: Colors.indigo,
+      //   accentColor: Colors.indigoAccent,
 
-      ),
+    //  ),
     ),
   );
 }
@@ -38,7 +38,7 @@ class _home extends State<Home> {
     return Scaffold(
       // resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          title: Text('Simple Interest Calculator'),
+          title: Text('Client - Server'),
         ),
         body: Container(
           margin: EdgeInsets.all(5.0),
@@ -79,13 +79,14 @@ class _home extends State<Home> {
                             textColor: Theme.of(context).primaryColorLight,
                             child: Text('Refresh',textScaleFactor: 1.5,),
                             onPressed: () {
+                              showAlertDialog(context);
 
                             })),
                   ],
                 ),
               ),
               Padding(padding: EdgeInsets.all(5.0),
-                child: Text('Recived message is ${this.fromServer}',style: textStyle,),),
+                child: Text('',style: textStyle,),),
             ],
           ),
         ));
@@ -95,21 +96,48 @@ class _home extends State<Home> {
     Socket socket = await Socket.connect('192.168.1.8', 9999);
     print('connected');
 
-    // listen to the received data event stream
+    // read  msg
     socket.listen((List<int> event) {
-      fromServer =utf8.decode(event);
+      fromServer = utf8.decode(event);
     });
 
-    // send hello
+    // send message
     var msg = msgController.text;
     socket.add(utf8.encode(msg));
 
-    // wait 5 seconds
-    await Future.delayed(Duration(seconds: 5));
 
     // .. and close the socket
     socket.close();
   }
+
+  showAlertDialog(BuildContext context) {
+
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("from Server"),
+      content: Text(fromServer),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
 }
 
 
